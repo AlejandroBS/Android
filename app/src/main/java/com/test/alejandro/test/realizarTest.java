@@ -51,7 +51,7 @@ public class realizarTest extends Activity {
     Pregunta pregunta;
     int numPreguntas,numPreguntasInsertadas, numPreguntaActual=0, numRespuestasInsertadas=0;
     int aciertos = 0, fallos = 0;
-    Character[] respuestas;
+    char[] respuestas;
     String nombreFichero;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,10 +74,10 @@ public class realizarTest extends Activity {
         corregir = (Button) findViewById(R.id.btn_corregir);
 
         f = new File(_DIRECTORIO_TEST_+File.separator+nombreFichero+File.separator+nombreFichero+".test");
-        Log.d("path",f.getAbsolutePath());
+        //Log.d("path",f.getAbsolutePath());
         //if(f.exists())
         try {
-            Log.d("existe","existe");
+            //Log.d("existe","existe");
             fis = new FileInputStream(_DIRECTORIO_TEST_+File.separator+nombreFichero+File.separator+nombreFichero+".test");
             fichero = new ObjectInputStream(fis);
 
@@ -87,7 +87,7 @@ public class realizarTest extends Activity {
             //test = (Test) fichero.readUnshared();
             test = (Test) fichero.readObject();
             fichero.close();
-            respuestas = new Character[numPreguntasInsertadas];
+            respuestas = new char[numPreguntasInsertadas];
             for(int i = 0; i<numPreguntasInsertadas;i++){
                 respuestas[i] = '0';
             }
@@ -111,17 +111,11 @@ public class realizarTest extends Activity {
             radioA.setText(pregunta.getRespuestaA());
             radioB.setText(pregunta.getRespuestaB());
             radioC.setText(pregunta.getRespuestaC());
+            radioA.setTextColor(Color.WHITE);
+            radioB.setTextColor(Color.WHITE);
+            radioC.setTextColor(Color.WHITE);
+            System.out.println(radioA.getCurrentTextColor());
 
-            /*if(pregunta.getRespuestaCorrecta()=='A'){
-
-                radioA.setChecked(true);
-            }
-            else if(pregunta.getRespuestaCorrecta()=='B'){
-                radioB.setChecked(true);
-            }
-            else if(pregunta.getRespuestaCorrecta()=='C'){
-                radioC.setChecked(true);
-            }*/
 
 
             btnAnterior.setEnabled(false);
@@ -138,6 +132,9 @@ public class realizarTest extends Activity {
                     radioA.setChecked(false);
                     radioB.setChecked(false);
                     radioC.setChecked(false);
+                    radioA.setTextColor(Color.WHITE);
+                    radioB.setTextColor(Color.WHITE);
+                    radioC.setTextColor(Color.WHITE);
 
 
                     grupoRadio.clearCheck();
@@ -180,6 +177,9 @@ public class realizarTest extends Activity {
                     radioB.setChecked(false);
                     radioC.setChecked(false);
 
+                    radioA.setTextColor(Color.WHITE);
+                    radioB.setTextColor(Color.WHITE);
+                    radioC.setTextColor(Color.WHITE);
                     grupoRadio.clearCheck();
 
                     btnAnterior.setEnabled(true);
@@ -225,7 +225,7 @@ public class realizarTest extends Activity {
                         if (numRespuestasInsertadas == numPreguntasInsertadas) {
                             corregir();
                         }
-                        Log.d("tamano",numRespuestasInsertadas+"");
+                        //Log.d("tamano",numRespuestasInsertadas+"");
                     }
 
                 }
@@ -245,7 +245,7 @@ public class realizarTest extends Activity {
                         if (numRespuestasInsertadas == numPreguntasInsertadas) {
                             corregir();
                         }
-                        Log.d("tamano",numRespuestasInsertadas+"");
+                        //Log.d("tamano",numRespuestasInsertadas+"");
                     }
                 }
             });
@@ -264,7 +264,7 @@ public class realizarTest extends Activity {
                         if(numRespuestasInsertadas==numPreguntasInsertadas){
                             corregir();
                         }
-                        Log.d("tamano",numRespuestasInsertadas+"");
+                        //Log.d("tamano",numRespuestasInsertadas+"");
                     }
                 }
             });
@@ -300,45 +300,57 @@ public class realizarTest extends Activity {
         if(respuestas[numPreguntaActual]=='A'){
             radioA.setChecked(true);
             if(respuestas[numPreguntaActual]==pregunta.getRespuestaCorrecta()){
-                radioA.setBackgroundColor(Color.GREEN);
+                radioA.setBackgroundColor(Color.rgb(145,252,141));
+                radioA.setTextColor(Color.BLACK);
             }
             else{
-                radioA.setBackgroundColor(Color.RED);
+                radioA.setBackgroundColor(Color.rgb(253,128,128));
+                radioA.setTextColor(Color.BLACK);
                 if(pregunta.getRespuestaCorrecta()=='B') {
-                    radioB.setBackgroundColor(Color.GREEN);
+                    radioB.setBackgroundColor(Color.rgb(145,252,141));
+                    radioB.setTextColor(Color.BLACK);
                 }
                 else{
-                    radioC.setBackgroundColor(Color.GREEN);
+                    radioC.setBackgroundColor(Color.rgb(145,252,141));
+                    radioC.setTextColor(Color.BLACK);
                 }
             }
         }
         if(respuestas[numPreguntaActual]=='B'){
             radioB.setChecked(true);
             if(respuestas[numPreguntaActual]==pregunta.getRespuestaCorrecta()){
-                radioB.setBackgroundColor(Color.GREEN);
+                radioB.setBackgroundColor(Color.rgb(145,252,141));
+                radioB.setTextColor(Color.BLACK);
             }
             else{
-                radioB.setBackgroundColor(Color.RED);
+                radioB.setBackgroundColor(Color.rgb(253,128,128));
+                radioB.setTextColor(Color.BLACK);
                 if(pregunta.getRespuestaCorrecta()=='A') {
-                    radioA.setBackgroundColor(Color.GREEN);
+                    radioA.setBackgroundColor(Color.rgb(145,252,141));
+                    radioA.setTextColor(Color.BLACK);
                 }
                 else{
-                    radioC.setBackgroundColor(Color.GREEN);
+                    radioC.setBackgroundColor(Color.rgb(145,252,141));
+                    radioC.setTextColor(Color.BLACK);
                 }
             }
         }
         if(respuestas[numPreguntaActual]=='C'){
             radioC.setChecked(true);
             if(respuestas[numPreguntaActual]==pregunta.getRespuestaCorrecta()){
-                radioC.setBackgroundColor(Color.GREEN);
+                radioC.setBackgroundColor(Color.rgb(145,252,141));
+                radioC.setTextColor(Color.BLACK);
             }
             else{
-                radioC.setBackgroundColor(Color.RED);
+                radioC.setBackgroundColor(Color.rgb(253,128,128));
+                radioC.setTextColor(Color.BLACK);
                 if(pregunta.getRespuestaCorrecta()=='B') {
-                    radioB.setBackgroundColor(Color.GREEN);
+                    radioB.setBackgroundColor(Color.rgb(145,252,141));
+                    radioB.setTextColor(Color.BLACK);
                 }
                 else{
-                    radioA.setBackgroundColor(Color.GREEN);
+                    radioA.setBackgroundColor(Color.rgb(145,252,141));
+                    radioA.setTextColor(Color.BLACK);
                 }
             }
         }
@@ -360,7 +372,7 @@ public class realizarTest extends Activity {
             estado=false;
         }
         System.out.println(estado);
-
+       // Log.d("RESULTADO",estado+"");
         Intent intent = new Intent(realizarTest.this, verResultadoTest.class);
         intent.putExtra("aciertos", aciertos);
         intent.putExtra("fallos", fallos);
@@ -368,6 +380,7 @@ public class realizarTest extends Activity {
         intent.putExtra("numPreguntas",numPreguntasInsertadas);
         intent.putExtra("numRespuestas", numRespuestasInsertadas);
         intent.putExtra("respuestasEscogidas",respuestas);
+        intent.putExtra("resultado",estado);
         startActivity(intent);
         finish();
 

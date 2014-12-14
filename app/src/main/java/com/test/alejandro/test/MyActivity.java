@@ -23,15 +23,18 @@ import static android.widget.Toast.LENGTH_LONG;
 
 public class MyActivity extends Activity {
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.miotrolayout);
-        ImageButton reload = (ImageButton) findViewById(R.id.imageButton4);
-        reload.setOnClickListener(new View.OnClickListener() {
+        ImageButton estadisticas = (ImageButton) findViewById(R.id.imageButton3);
+        estadisticas.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(MyActivity.this, "click", LENGTH_LONG).show();
+                Intent t = new Intent(MyActivity.this,estadisticas.class);
+                startActivity(t);
             }
         });
         ImageButton study = (ImageButton)findViewById(R.id.imageButton2);

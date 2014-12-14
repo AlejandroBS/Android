@@ -1,24 +1,21 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.test.alejandro.test.verResultadoTest">
+    tools:context="com.test.alejandro.test.estadisticasTest">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="40dp"
-        android:textColor="@android:color/holo_green_light"
-        android:layout_centerHorizontal="true"
         android:layout_alignParentTop="true"
-        android:text=""
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:id="@+id/resultado" />
+        android:layout_centerInParent="true"
+        android:id="@+id/txt_nombreTest"
+        android:layout_centerHorizontal="true"/>
 
     <ListView
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/lista"
-        android:layout_below="@id/resultado"/>
-
+        android:layout_below="@id/txt_nombreTest"
+        android:id="@+id/lista_resultadoTest" />
 
 </RelativeLayout>

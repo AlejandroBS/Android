@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission." />
 
     <application
         android:allowBackup="true"
@@ -53,6 +54,22 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.test.alejandro.test.ActivityLoadingListarTest" />
+        </activity>
+        <activity
+            android:name="com.test.alejandro.test.estadisticas"
+            android:label="@string/title_activity_estadisticas"
+            android:parentActivityName="com.test.alejandro.test.MyActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.test.alejandro.test.MyActivity" />
+        </activity>
+        <activity
+            android:name="com.test.alejandro.test.estadisticasTest"
+            android:label="@string/title_activity_estadisticas_test"
+            android:parentActivityName="com.test.alejandro.test.estadisticas" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.test.alejandro.test.estadisticas" />
         </activity>
     </application>
 

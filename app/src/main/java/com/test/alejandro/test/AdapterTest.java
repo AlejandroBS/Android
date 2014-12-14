@@ -1,12 +1,15 @@
 package com.test.alejandro.test;
 
 import android.app.Activity;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.util.logging.Handler;
 
 /**
  * Created by Alejandro on 24/11/2014.
@@ -37,16 +40,25 @@ public class AdapterTest extends ArrayAdapter<ItemTest>{
         if(datos[posicion].getEstado().equals("Descargar")){
             image.setImageResource(R.drawable.download);
         }
+        if(datos[posicion].getEstado().equals("Redescargar")){
+            image.setImageResource(R.drawable.download);
+            TextView txt_redescargar = (TextView) item.findViewById(R.id.txt_redescargar);
+            txt_redescargar.setText("(Nueva versión)");
+        }
         ImageView image2 = (ImageView) item.findViewById(R.id.imageView3);
-        if(datos[posicion].getUltimoResultado() == 0) {
+
+        Handler_sqlite sqlite = new Handler_sqlite(context);
+        if(sqlite.getUltimoResultadoTest(datos[posicion].getTitulo())==1){
             image2.setImageResource(R.drawable.prov_aprobado);
         }
-        if(datos[posicion].getUltimoResultado() == 1){
+        else if (sqlite.getUltimoResultadoTest(datos[posicion].getTitulo())==0){
             image2.setImageResource(R.drawable.prov_suspenso);
+        } else if (sqlite.getUltimoResultadoTest(datos[posicion].getTitulo())==-1){
+            image2.setX(0);
+            image2.setY(0);
+            image2.setImageBitmap(null);
         }
-        if(datos[posicion].getUltimoResultado() == 2){
-            image2.setImageResource(R.drawable.nulo);
-        }
+        sqlite.close();
 
         return item;
     }

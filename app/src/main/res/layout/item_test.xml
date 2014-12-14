@@ -24,6 +24,15 @@
             android:textSize="4mm"
             android:id="@+id/titulo" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text=""
+            android:id="@+id/txt_redescargar"
+            android:textColor="#ff707070"
+            android:textStyle="italic" />
+
 
     </LinearLayout>
 

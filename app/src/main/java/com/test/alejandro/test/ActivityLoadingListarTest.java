@@ -5,13 +5,11 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,16 +17,13 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 
 public class ActivityLoadingListarTest extends Activity {
 
     private final int WAIT_TIME = 2500;
     public static boolean acabado = false;
-
+    public static ArrayList<Integer> versiones;
     public static ArrayList<String> listaFicheros;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,11 +36,7 @@ public class ActivityLoadingListarTest extends Activity {
         tarea.execute(new Parametros(1));
 
         TextView tv_cargando = (TextView) findViewById(R.id.cargando);
-        File file = getFilesDir();
-        File[] files = file.listFiles();
-        for(int i = 0;i<files.length;i++){
-            Log.d("files",files[i].getAbsolutePath().toString());
-        }
+
 
 
 
@@ -76,18 +67,24 @@ public class ActivityLoadingListarTest extends Activity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    /**
+     * Esta clase se conecta al servidor para saber que test hay en el servidor y que versión tienen.
+     */
     class AsyncTaskListarTest extends AsyncTask<Parametros,Progreso,Resultado> {
 
         private boolean error = false;
         Socket socket;
         @Override
         protected void onPreExecute() {
+            versiones = new ArrayList<Integer>();
         }
         @Override
         protected Resultado doInBackground(Parametros... params) {
-            Log.d("H", "HOLAAA");
+            //Log.d("H", "HOLAAA");
 
             ArrayList<String> listaFicheros = new ArrayList<String>();
+
             int tamano = 0;
             try {
                 socket = new Socket(DatosConexion.IP,DatosConexion.port);
@@ -108,6 +105,7 @@ public class ActivityLoadingListarTest extends Activity {
                 salida.writeInt(1);
                 salida.flush();
                 while(entrada.readBoolean()){
+                    versiones.add(tamano,entrada.readInt());
                     String s = entrada.readUTF();
                     listaFicheros.add(s);
                     tamano++;
@@ -136,6 +134,7 @@ public class ActivityLoadingListarTest extends Activity {
                 //for(int i = 0;i<listaFicheros.size();i++){
                 intent.putExtra("con", '1');
                 intent.putExtra("items", listaFicheros);
+                intent.putExtra("versiones",versiones);
                 //}
                 finish();
                 startActivity(intent);

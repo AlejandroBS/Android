@@ -6,6 +6,7 @@ package com.test.alejandro.test;
  import android.content.ClipData;
  import android.content.Context;
  import android.content.Intent;
+ import android.content.pm.ActivityInfo;
  import android.os.AsyncTask;
 import android.os.Bundle;
  import android.os.Environment;
@@ -22,6 +23,7 @@ import android.widget.Toast;
  import java.io.BufferedOutputStream;
  import java.io.File;
  import java.io.FileInputStream;
+ import java.io.FileNotFoundException;
  import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -39,23 +41,30 @@ public class Activity_Estudiar extends Activity {
     Context context;
     public static String _DIRECTORIO_TEST_;
     ProgressDialog dialogoProgreso;
+    ArrayList<Integer> versionesServidor =null;
+    ArrayList<Integer> versionesCliente;
     Bundle bundle;
+    AdapterTest adapter =null;
+    ListView lista = null;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout__estudiar);
         bundle = getIntent().getExtras();
-        ListView lista = (ListView) findViewById(R.id.listView);
+        lista = (ListView) findViewById(R.id.listView);
         context=this;
         dialogoProgreso = new ProgressDialog(context);
         _DIRECTORIO_TEST_ =  Environment.getExternalStorageDirectory().toString()+File.separator+"aprendetest"+File.separator+"data";
         //getFilesDir().getAbsolutePath().toString()+File.separator+"aprendetest"+File.separator+"data";
-
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        versionesCliente = new ArrayList<Integer>();
         if(bundle.getChar("con")=='1'){
             items = (ArrayList<String>)bundle.getStringArrayList("items");
 
             datos = new ItemTest[items.size()];
-
+            versionesServidor = (ArrayList<Integer>) bundle.getIntegerArrayList("versiones");
             new File(_DIRECTORIO_TEST_).mkdirs();
 
             File[] f = new File(_DIRECTORIO_TEST_).listFiles();
@@ -68,7 +77,33 @@ public class Activity_Estudiar extends Activity {
                 File file = new File(_DIRECTORIO_TEST_+File.separator+items.get(i));
 
                 if(file.exists()==true){
-                    datos[i]=new ItemTest(items.get(i),"","Realizar", i);
+                    File fi =new File(_DIRECTORIO_TEST_+File.separator+items.get(i)+File.separator+items.get(i)+".test");
+                    FileInputStream fis = null;
+                    Test t = null;
+                    Integer version =-1;
+                    try {
+                        fis = new FileInputStream(fi);
+                        ObjectInputStream ois = new ObjectInputStream(fis);
+                        ois.readInt();
+                        ois.readInt();
+
+                        t = (Test) ois.readObject();
+                        version = t.getVersion();
+                        ois.close();
+
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (ClassNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                    if(versionesServidor!=null && version==versionesServidor.get(i)) {
+                        datos[i] = new ItemTest(items.get(i), "", "Realizar", i);
+                    }
+                    else{
+                        datos[i]=new ItemTest(items.get(i),"","Redescargar", i);
+                    }
                 }
                 else{
                     datos[i]=new ItemTest(items.get(i),"","Descargar", i);
@@ -95,6 +130,7 @@ public class Activity_Estudiar extends Activity {
                     for (int i = 0; i < ficheros.length; i++) {
                         File fch = new File(_DIRECTORIO_TEST_ + File.separator + ficheros[i].getName() + File.separator + ficheros[i].getName() + ".test");
                         if (fch.exists()) {
+
                             datos[j] = new ItemTest(ficheros[i].getName(), "", "Realizar", 0);
                             j++;
                         }
@@ -107,7 +143,7 @@ public class Activity_Estudiar extends Activity {
 
         }
 
-        AdapterTest adapter = new AdapterTest(this,datos);
+        adapter = new AdapterTest(this,datos);
         lista.setAdapter(adapter);
         if(bundle.getChar("con")=='0' && datos.length==0){
             finish();
@@ -118,11 +154,45 @@ public class Activity_Estudiar extends Activity {
                 ItemTest item = datos[position];
                 File fichero = new File(_DIRECTORIO_TEST_+File.separator+item.getTitulo()+File.separator+item.getTitulo()+".test");
                 if(fichero.exists()){
-                    Toast.makeText(Activity_Estudiar.this, "CARGANDO...",Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(Activity_Estudiar.this,realizarTest.class);
-                    intent.putExtra("nombre",item.getTitulo());
-                    startActivity(intent);
-                    //finish();
+                    FileInputStream fis = null;
+                    Test t = null;
+                    Integer version =-1;
+                    try {
+                        fis = new FileInputStream(fichero);
+                        ObjectInputStream ois = new ObjectInputStream(fis);
+                        ois.readInt();
+                        ois.readInt();
+
+                        t = (Test) ois.readObject();
+                        version = t.getVersion();
+                        ois.close();
+
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (ClassNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                    if((t!=null && versionesServidor!=null && version==versionesServidor.get(position)) || t==null ||bundle.getChar("con")=='0' ) {
+                        Toast.makeText(Activity_Estudiar.this, "CARGANDO...", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(Activity_Estudiar.this, realizarTest.class);
+                        intent.putExtra("nombre", item.getTitulo());
+                        startActivity(intent);
+                        //finish();
+                    }
+                    else{
+                        if(bundle.getChar("con")=='1'){
+                            dialogoProgreso.setTitle("Descargando");
+                            dialogoProgreso.setMessage("Por favor espere...");
+                            dialogoProgreso.setCancelable(false);
+                            dialogoProgreso.setProgress(0);
+                            dialogoProgreso.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+                            dialogoProgreso.show();
+                            asyncDescarga = new AsyncDescargarFichero();
+                            asyncDescarga.execute(item.getTitulo());
+                        }
+                    }
                 }
                 else{
                     if(bundle.getChar("con")=='1'){
@@ -143,6 +213,45 @@ public class Activity_Estudiar extends Activity {
 
     }
 
+    /**
+     *
+     * @param i es la posicion del array de datos para la cual queremos verificar la versión
+     * @return true si el test del dispositivo está actualizado, false si sucede lo contrario.
+     */
+    public boolean getTestVersion(int i){
+
+        File fichero = new File(_DIRECTORIO_TEST_+File.separator+datos[i].getTitulo()+File.separator+datos[i].getTitulo()+".test");
+        FileInputStream fis = null;
+
+        Test t = null;
+        Integer version =-1;
+        try {
+            fis = new FileInputStream(fichero);
+            ObjectInputStream ois = new ObjectInputStream(fis);
+            ois.readInt();
+            ois.readInt();
+
+            t = (Test) ois.readObject();
+            version = t.getVersion();
+            ois.close();
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        versionesCliente.add(i,version);
+        if(version==versionesServidor.get(i)){
+            return true;
+        }
+        else{
+            return false;
+        }
+
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -150,6 +259,14 @@ public class Activity_Estudiar extends Activity {
         getMenuInflater().inflate(R.menu.menu_activity__estudiar, menu);
         return true;
     }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        if(adapter!=null && lista!=null)
+        lista.setAdapter(adapter);
+    }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -165,6 +282,10 @@ public class Activity_Estudiar extends Activity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    /**
+     * Esta clase Se encarga de conectarse al servidor y descargar un fichero par aposteriormente descomprimirlo.
+     */
     class AsyncDescargarFichero extends AsyncTask<String,Integer,Boolean> {
         Socket socket ;
         ObjectOutputStream salida ;
@@ -322,7 +443,7 @@ public class Activity_Estudiar extends Activity {
                 ZipEntry entry;
                 while ((entry = zis.getNextEntry()) != null) {
 
-                    System.out.println("Extracting: " + OUTPUT_FOLDER+entry.getName());
+                   // System.out.println("Extracting: " + OUTPUT_FOLDER+entry.getName());
                     File f = new File(_DIRECTORIO_TEST_+OUTPUT_FOLDER.replace('\\','/')+entry.getName().replace('\\','/'));
 
                     f.getParentFile().mkdirs();
@@ -335,7 +456,7 @@ public class Activity_Estudiar extends Activity {
                     BufferedOutputStream dest = new BufferedOutputStream(fos, 1024);
                     while ((count = zis.read(data, 0, 1024)) != -1) {
                         dest.write(data, 0, count);
-                        Log.d("escribe",_DIRECTORIO_TEST_+OUTPUT_FOLDER.replace('\\','/')+entry.getName().replace('\\','/'));
+                        //Log.d("escribe",_DIRECTORIO_TEST_+OUTPUT_FOLDER.replace('\\','/')+entry.getName().replace('\\','/'));
                         data = new byte[1024];
                     }
                     dest.flush();

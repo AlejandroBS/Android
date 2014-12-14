@@ -96,14 +96,14 @@
                 android:id="@+id/radioA" />
 
             <RadioButton
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="    ESTA ES MI RESPUESTA B"
                 android:layout_marginTop="5dp"
                 android:id="@+id/radioB" />
 
             <RadioButton
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="    ESTA ES MI RESPUESTA C"
                 android:layout_marginTop="5dp"

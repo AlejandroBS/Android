@@ -8,5 +8,7 @@
     <string name="title_activity_activity_async_listar_test">ActivityAsyncListarTest</string>
     <string name="title_activity_realizar_test">realizarTest</string>
     <string name="title_activity_ver_resultado_test">verResultadoTest</string>
+    <string name="title_activity_estadisticas">estadisticas</string>
+    <string name="title_activity_estadisticas_test">estadisticasTest</string>
 
 </resources>
